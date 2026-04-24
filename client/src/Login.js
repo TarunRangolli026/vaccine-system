@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import ForgotPassword from './ForgotPassword';
 
@@ -7,7 +7,12 @@ const Login = ({ onLoginSuccess }) => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
-  const [isPasswordFocused, setIsPasswordFocused] = useState(false); // To show hints only when typing
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+
+  // --- CAPTCHA States ---
+  const [captchaCode, setCaptchaCode] = useState("");
+  const [captchaInput, setCaptchaInput] = useState("");
+  const [captchaError, setCaptchaError] = useState(""); 
 
   const backgroundHospital = "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=2053&auto=format&fit=crop";
   const babyVaccine = "https://images.pexels.com/photos/3845129/pexels-photo-3845129.jpeg?auto=compress&cs=tinysrgb&w=600";
@@ -15,7 +20,25 @@ const Login = ({ onLoginSuccess }) => {
   const clinicPlay = "https://images.pexels.com/photos/127873/pexels-photo-127873.jpeg?auto=compress&cs=tinysrgb&w=600";
   const medicalCheckup = "https://images.pexels.com/photos/3985227/pexels-photo-3985227.jpeg?auto=compress&cs=tinysrgb&w=600";
 
-  // --- Live Validation Checks ---
+  // --- CAPTCHA Generator (Letters + Numbers) ---
+  const generateCaptcha = useCallback(() => {
+    const chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let result = "";
+    for (let i = 0; i < 6; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setCaptchaCode(result);
+    setCaptchaInput(""); 
+    // We don't clear captchaError here so the user can see it briefly
+  }, []);
+
+  useEffect(() => {
+    if (view === 'parentAuth' || view === 'adminLogin') {
+      generateCaptcha();
+      setCaptchaError(""); // Clear error when switching views
+    }
+  }, [view, isRegistering, generateCaptcha]);
+
   const hasMinLen = formData.password.length >= 8 && formData.password.length <= 15;
   const hasUpper = /[A-Z]/.test(formData.password);
   const hasSpecial = /[!@#$%^&*]/.test(formData.password);
@@ -23,16 +46,26 @@ const Login = ({ onLoginSuccess }) => {
   const handleAuth = async (e) => {
     e.preventDefault();
 
+    // --- CAPTCHA Validation ---
+    if (captchaInput !== captchaCode) {
+      setCaptchaError("❌ Incorrect CAPTCHA. Please try again.");
+      generateCaptcha(); // Refresh code on failure
+      return; 
+    }
+
+    // If correct, clear the error
+    setCaptchaError("");
+
     if (view === 'adminLogin') {
       if (formData.email === 'Sharan@gmail.com' && formData.password === 'admin@123') {
         onLoginSuccess({ fullName: 'Dr. Sharan', role: 'admin' });
       } else {
         alert("Invalid Admin Credentials");
+        generateCaptcha();
       }
       return;
     }
 
-    // Final block if they try to submit without meeting requirements
     if (isRegistering && (!hasMinLen || !hasUpper || !hasSpecial)) {
       alert("Please fulfill all password requirements.");
       return;
@@ -53,6 +86,7 @@ const Login = ({ onLoginSuccess }) => {
       }
     } catch (error) {
       alert(error.response?.data?.error || "Action failed.");
+      generateCaptcha();
     }
   };
 
@@ -104,7 +138,6 @@ const Login = ({ onLoginSuccess }) => {
                   <span style={styles.eyeIcon} onClick={() => setShowPassword(!showPassword)}>{showPassword ? "👁️‍" : "👁️"}</span>
                 </div>
 
-                {/* --- LIVE PASSWORD HINTS --- */}
                 {isRegistering && isPasswordFocused && (
                   <div style={styles.hintContainer}>
                     {!hasMinLen && <p style={styles.hintText}>• 8 to 15 characters</p>}
@@ -113,8 +146,35 @@ const Login = ({ onLoginSuccess }) => {
                   </div>
                 )}
 
+                {/* --- REALISTIC CAPTCHA UI --- */}
+                <div style={styles.captchaWrapper}>
+                  <div style={styles.captchaBox}>
+                    <div style={styles.captchaVisual}>
+                      {captchaCode}
+                      <div style={styles.distortionLine}></div>
+                    </div>
+                    <button type="button" onClick={generateCaptcha} title="Refresh Captcha" style={styles.refreshBtn}>🔄</button>
+                  </div>
+                  <input 
+                    style={{
+                        ...styles.input, 
+                        marginTop: '8px', 
+                        marginBottom: '0',
+                        borderColor: captchaError ? '#e53935' : '#ddd' // Red border on error
+                    }} 
+                    placeholder="Enter the code shown" 
+                    value={captchaInput} 
+                    onChange={(e) => {
+                        setCaptchaInput(e.target.value);
+                        if(captchaError) setCaptchaError(""); // Clear error while they type
+                    }} 
+                    required 
+                  />
+                  {captchaError && <div style={styles.captchaErrorBox}>{captchaError}</div>}
+                </div>
+
                 {view === 'parentAuth' && !isRegistering && (
-                  <div style={{ textAlign: 'right', marginTop: '-5px' }}>
+                  <div style={{ textAlign: 'right', marginTop: '5px' }}>
                     <span onClick={() => setView('forgot')} style={{ color: '#6A1B9A', cursor: 'pointer', fontSize: '13px', fontWeight: 'bold' }}>
                       Forgot Password?
                     </span>
@@ -148,13 +208,59 @@ const styles = {
   imgLabel: { color: '#4A148C', fontSize: '14px', margin: '8px 0 0', fontWeight: 'bold' },
   card: { backgroundColor: 'white', padding: '40px', borderRadius: '25px', width: '360px', textAlign: 'center', zIndex: 10, boxShadow: '0 20px 50px rgba(0,0,0,0.4)' },
   roleBtn: { width: '100%', padding: '14px', margin: '10px 0', borderRadius: '12px', border: '2px solid #6A1B9A', color: '#6A1B9A', cursor: 'pointer', background: 'none', fontWeight: 'bold' },
-  input: { width: '100%', padding: '14px', margin: '10px 0', borderRadius: '10px', border: '1px solid #ddd', fontSize: '15px' },
+  input: { width: '100%', padding: '14px', margin: '10px 0', borderRadius: '10px', border: '1px solid #ddd', fontSize: '15px', outline: 'none' },
   eyeIcon: { position: 'absolute', right: '15px', top: '22px', cursor: 'pointer', fontSize: '18px' },
   mainBtn: { width: '100%', padding: '14px', background: '#6A1B9A', color: 'white', border: 'none', borderRadius: '10px', cursor: 'pointer', marginTop: '15px', fontWeight: 'bold' },
   back: { marginTop: '20px', cursor: 'pointer', color: '#6A1B9A', fontWeight: '600' },
   toggle: { marginTop: '15px', fontSize: '14px', cursor: 'pointer', color: '#7B1FA2', fontWeight: '600' },
   hintContainer: { textAlign: 'left', marginTop: '-5px', marginBottom: '10px', paddingLeft: '5px' },
-  hintText: { color: '#D32F2F', fontSize: '12px', margin: '2px 0', fontWeight: '500' }
+  hintText: { color: '#D32F2F', fontSize: '12px', margin: '2px 0', fontWeight: '500' },
+  
+  // CAPTCHA STYLES
+  captchaWrapper: { margin: '15px 0', textAlign: 'left' },
+  captchaBox: { 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'space-between', 
+    background: '#e8eaf6', 
+    padding: '8px 12px', 
+    borderRadius: '10px',
+    border: '1px solid #c5cae9'
+  },
+  captchaVisual: { 
+    position: 'relative',
+    fontSize: '24px', 
+    fontWeight: '800', 
+    fontStyle: 'italic', 
+    color: '#1a237e', 
+    letterSpacing: '6px',
+    userSelect: 'none',
+    fontFamily: '"Courier New", Courier, monospace',
+    padding: '5px 10px',
+    borderRadius: '5px',
+    overflow: 'hidden'
+  },
+  distortionLine: {
+    position: 'absolute',
+    top: '50%',
+    left: '0',
+    width: '100%',
+    height: '2px',
+    background: 'rgba(0,0,0,0.15)',
+    transform: 'rotate(-7deg)',
+    pointerEvents: 'none'
+  },
+  refreshBtn: { background: 'none', border: 'none', cursor: 'pointer', fontSize: '20px' },
+  captchaErrorBox: { 
+    color: '#d32f2f', 
+    fontSize: '13px', 
+    marginTop: '6px', 
+    fontWeight: '600', 
+    textAlign: 'center',
+    padding: '4px',
+    background: '#ffebee',
+    borderRadius: '5px'
+  }
 };
 
 export default Login;
