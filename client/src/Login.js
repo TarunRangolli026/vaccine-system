@@ -108,8 +108,14 @@ const Login = ({ onLoginSuccess }) => {
 
           {/* Navbar */}
           <div style={styles.navStrip}>
-            <div style={styles.navLogo}>🏥 Malaprabha Hospital, Bailhongal</div>
-            <button style={styles.navBtn} onClick={() => setView('selection')}>Login / Register</button>
+            <div style={styles.navLogo}>
+              <span style={styles.navLogoIcon}>🏥</span>
+              <div>
+                <div style={styles.navLogoText}>Malaprabha Multispeciality Hospital</div>
+                <div style={styles.navLogoSub}>Bailhongal, Karnataka</div>
+              </div>
+            </div>
+            <div style={styles.navBadge}>💉 Vaccination Portal</div>
           </div>
 
           {/* Hero */}
@@ -301,8 +307,11 @@ const styles = {
 
   // Navbar
   navStrip: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '20px', padding: '14px 28px' },
-  navLogo: { color: 'white', fontWeight: '800', fontSize: '18px', letterSpacing: '0.02em' },
-  navBtn: { backgroundColor: '#FFC107', color: '#4A148C', border: 'none', padding: '10px 22px', borderRadius: '12px', fontWeight: '800', cursor: 'pointer', fontSize: '14px' },
+  navLogo: { display: 'flex', alignItems: 'center', gap: '12px' },
+  navLogoIcon: { fontSize: '36px', background: 'rgba(255,255,255,0.15)', borderRadius: '12px', padding: '6px 10px', border: '1px solid rgba(255,255,255,0.2)' },
+  navLogoText: { color: 'white', fontWeight: '800', fontSize: '17px' },
+  navLogoSub: { color: 'rgba(255,255,255,0.55)', fontSize: '11px', marginTop: '2px' },
+  navBadge: { background: 'rgba(255,193,7,0.18)', border: '1px solid rgba(255,193,7,0.35)', color: '#FFC107', padding: '8px 18px', borderRadius: '20px', fontSize: '13px', fontWeight: '700' },
 
   // Hero
   heroSection: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '40px', background: 'rgba(255,255,255,0.07)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '30px', padding: '50px 50px' },
