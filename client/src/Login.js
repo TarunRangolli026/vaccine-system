@@ -97,17 +97,91 @@ const Login = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div style={{...styles.container, backgroundImage: `linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url(${backgroundHospital})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed'}}>
+    <div style={{...styles.container, backgroundImage: `linear-gradient(rgba(10,0,30,0.78), rgba(40,0,80,0.82)), url(${backgroundHospital})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed'}}>
+
+      {view === 'landing' && <div style={styles.blob1} />}
+      {view === 'landing' && <div style={styles.blob2} />}
+      {view === 'landing' && <div style={styles.blob3} />}
+
       {view === 'landing' && (
-        <div style={styles.hero}>
-          <div style={styles.floatingBoxTopLeft}><img src={babyVaccine} alt="Vaccine" style={styles.floatingImg} /><p style={styles.imgLabel}>Safe Dosing</p></div>
-          <div style={styles.floatingBoxTopRight}><img src={medicalCheckup} alt="Checkup" style={styles.floatingImg} /><p style={styles.imgLabel}>Full Checkup</p></div>
-          <div style={styles.logoCircle}>🏥</div>
-          <h1 style={styles.titleLanding}>Malaprabha Hospital Bailhongal</h1>
-          <p style={styles.subtitleLanding}>Leading family vaccination care for Bailhongal and surrounding communities.</p>
-          <button style={styles.mainBtnLarge} onClick={() => setView('selection')}>Get Connected With Us</button>
-          <div style={styles.floatingBoxBottomLeft}><img src={doctorImage} alt="Doctor" style={styles.floatingImg} /><p style={styles.imgLabel}>Expert Doctors</p></div>
-          <div style={styles.floatingBoxBottomRight}><img src={clinicPlay} alt="Clinic" style={styles.floatingImg} /><p style={styles.imgLabel}>Friendly Clinic</p></div>
+        <div style={styles.landingWrapper}>
+
+          {/* Navbar */}
+          <div style={styles.navStrip}>
+            <div style={styles.navLogo}>🏥 Malaprabha Hospital, Bailhongal</div>
+            <button style={styles.navBtn} onClick={() => setView('selection')}>Login / Register</button>
+          </div>
+
+          {/* Hero */}
+          <div style={styles.heroSection}>
+            <div style={styles.heroLeft}>
+              <span style={styles.heroPill}>🌟 Trusted by 500+ Families in Bailhongal</span>
+              <h1 style={styles.heroTitle}>Smart Vaccination<br/><span style={styles.heroAccent}>Care for Your Child</span></h1>
+              <p style={styles.heroDesc}>
+                Malaprabha Multispeciality Hospital brings you a digital vaccination management portal —
+                track your child's immunization milestones, book appointments with expert doctors,
+                receive real-time reminders, and access official health certificates, all from one place.
+              </p>
+              <div style={styles.statsRow}>
+                <div style={styles.statGlass}><span style={styles.statNum}>500+</span><span style={styles.statLabel}>Families</span></div>
+                <div style={styles.statGlass}><span style={styles.statNum}>9</span><span style={styles.statLabel}>Milestones</span></div>
+                <div style={styles.statGlass}><span style={styles.statNum}>24/7</span><span style={styles.statLabel}>Access</span></div>
+              </div>
+              <button style={styles.mainBtnLarge} onClick={() => setView('selection')}>Get Started →</button>
+            </div>
+            <div style={styles.heroRight}>
+              <div style={styles.imgCardMain}>
+                <img src={babyVaccine} alt="Baby Vaccine" style={styles.imgMain} />
+                <div style={styles.imgCardBadge}>💉 Safe Vaccination</div>
+              </div>
+              <div style={styles.imgCardSmallCol}>
+                <div style={styles.imgCardSmall}>
+                  <img src={doctorImage} alt="Doctor" style={styles.imgSmall} />
+                  <div style={styles.imgSmallLabel}>👨⚕️ Expert Doctors</div>
+                </div>
+                <div style={styles.imgCardSmall}>
+                  <img src={medicalCheckup} alt="Checkup" style={styles.imgSmall} />
+                  <div style={styles.imgSmallLabel}>🩺 Full Checkup</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* About */}
+          <div style={styles.aboutGlass}>
+            <h2 style={styles.aboutTitle}>About Our Portal</h2>
+            <p style={styles.aboutDesc}>
+              The <strong>Malaprabha Vaccination Portal</strong> is a dedicated digital health platform built for parents
+              in Bailhongal and surrounding communities. Our system follows the <strong>National Immunization Schedule</strong>
+              to ensure every child receives timely vaccinations from birth to 16 years. Parents can register their children,
+              view personalized vaccine roadmaps, schedule appointments, and download official vaccination certificates —
+              all secured and accessible 24/7.
+            </p>
+          </div>
+
+          {/* Features */}
+          <div style={styles.featuresRow}>
+            {[
+              { icon: '🗺️', title: 'Vaccine Roadmap', desc: 'Personalized milestone tracking from birth to 16 years.' },
+              { icon: '📅', title: 'Book Appointments', desc: 'Schedule visits with doctors in just a few clicks.' },
+              { icon: '📜', title: 'Health Certificates', desc: 'Download official vaccination records anytime.' },
+              { icon: '🔔', title: 'Smart Reminders', desc: 'Get notified before every upcoming vaccine milestone.' },
+            ].map((f, i) => (
+              <div key={i} style={styles.featureGlass}>
+                <div style={styles.featureIcon}>{f.icon}</div>
+                <div style={styles.featureTitle}>{f.title}</div>
+                <div style={styles.featureDesc}>{f.desc}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Image Strip */}
+          <div style={styles.imageStrip}>
+            {[clinicPlay, medicalCheckup, doctorImage, babyVaccine].map((src, i) => (
+              <img key={i} src={src} alt="medical" style={styles.stripImg} />
+            ))}
+          </div>
+
         </div>
       )}
 
@@ -215,18 +289,59 @@ const Login = ({ onLoginSuccess }) => {
 };
 
 const styles = {
-  container: { height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', fontFamily: '"Segoe UI", sans-serif', overflow: 'hidden', position: 'relative' },
-  hero: { textAlign: 'center', color: 'white', zIndex: 1 },
-  logoCircle: { fontSize: '50px', background: 'rgba(255,255,255,0.95)', width: '90px', height: '90px', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '0 auto 20px', boxShadow: '0 8px 20px rgba(0,0,0,0.25)', color: '#6A1B9A' },
-  titleLanding: { fontSize: '65px', margin: '0', fontWeight: '900', fontFamily: 'Georgia, serif', letterSpacing: '0.04em', textShadow: '0 3px 16px rgba(0,0,0,0.2)' },
-  subtitleLanding: { fontSize: '22px', margin: '18px auto 35px', maxWidth: '760px', fontWeight: '300', lineHeight: '1.4' },
-  mainBtnLarge: { padding: '18px 45px', backgroundColor: '#6A1B9A', color: 'white', border: 'none', borderRadius: '50px', cursor: 'pointer', fontSize: '20px', fontWeight: 'bold' },
-  floatingBoxTopLeft: { position: 'absolute', top: '5%', left: '5%', width: '170px', background: 'white', padding: '10px', borderRadius: '15px', boxShadow: '0 10px 25px rgba(0,0,0,0.3)' },
-  floatingBoxTopRight: { position: 'absolute', top: '8%', right: '8%', width: '170px', background: 'white', padding: '10px', borderRadius: '15px', boxShadow: '0 10px 25px rgba(0,0,0,0.3)' },
-  floatingBoxBottomLeft: { position: 'absolute', bottom: '10%', left: '10%', width: '190px', background: 'white', padding: '10px', borderRadius: '15px', boxShadow: '0 10px 25px rgba(0,0,0,0.3)' },
-  floatingBoxBottomRight: { position: 'absolute', bottom: '5%', right: '5%', width: '180px', background: 'white', padding: '10px', borderRadius: '15px', boxShadow: '0 10px 25px rgba(0,0,0,0.3)' },
-  floatingImg: { width: '100%', borderRadius: '10px', height: '115px', objectFit: 'cover' },
-  imgLabel: { color: '#4A148C', fontSize: '14px', margin: '8px 0 0', fontWeight: 'bold' },
+  container: { minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', fontFamily: '"Segoe UI", sans-serif', overflowX: 'hidden', position: 'relative' },
+
+  // Blobs
+  blob1: { position: 'fixed', top: '-150px', right: '-150px', width: '500px', height: '500px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(106,27,154,0.35) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0 },
+  blob2: { position: 'fixed', bottom: '-150px', left: '-150px', width: '450px', height: '450px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,193,7,0.2) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0 },
+  blob3: { position: 'fixed', top: '40%', left: '30%', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(33,150,243,0.1) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0 },
+
+  // Landing wrapper
+  landingWrapper: { width: '100%', maxWidth: '1100px', padding: '20px 30px 40px', zIndex: 1, display: 'flex', flexDirection: 'column', gap: '30px' },
+
+  // Navbar
+  navStrip: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '20px', padding: '14px 28px' },
+  navLogo: { color: 'white', fontWeight: '800', fontSize: '18px', letterSpacing: '0.02em' },
+  navBtn: { backgroundColor: '#FFC107', color: '#4A148C', border: 'none', padding: '10px 22px', borderRadius: '12px', fontWeight: '800', cursor: 'pointer', fontSize: '14px' },
+
+  // Hero
+  heroSection: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '40px', background: 'rgba(255,255,255,0.07)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '30px', padding: '50px 50px' },
+  heroLeft: { flex: 1 },
+  heroPill: { display: 'inline-block', background: 'rgba(255,193,7,0.2)', border: '1px solid rgba(255,193,7,0.4)', color: '#FFC107', padding: '6px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: '700', marginBottom: '18px' },
+  heroTitle: { fontSize: '46px', fontWeight: '900', color: 'white', margin: '0 0 16px', lineHeight: 1.15 },
+  heroAccent: { color: '#FFC107' },
+  heroDesc: { fontSize: '15px', color: 'rgba(255,255,255,0.78)', lineHeight: '1.8', marginBottom: '28px', maxWidth: '480px' },
+  statsRow: { display: 'flex', gap: '16px', marginBottom: '30px' },
+  statGlass: { background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '16px', padding: '14px 22px', textAlign: 'center' },
+  statNum: { display: 'block', fontSize: '22px', fontWeight: '900', color: '#FFC107' },
+  statLabel: { display: 'block', fontSize: '11px', color: 'rgba(255,255,255,0.65)', marginTop: '4px' },
+  mainBtnLarge: { padding: '15px 36px', backgroundColor: '#6A1B9A', color: 'white', border: 'none', borderRadius: '50px', cursor: 'pointer', fontSize: '16px', fontWeight: '800', boxShadow: '0 10px 30px rgba(106,27,154,0.5)', letterSpacing: '0.03em' },
+
+  // Hero images
+  heroRight: { display: 'flex', gap: '14px', alignItems: 'stretch', flexShrink: 0 },
+  imgCardMain: { position: 'relative', borderRadius: '22px', overflow: 'hidden', width: '200px', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.2)' },
+  imgMain: { width: '100%', height: '260px', objectFit: 'cover', display: 'block' },
+  imgCardBadge: { position: 'absolute', bottom: '12px', left: '10px', right: '10px', background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.3)', color: 'white', fontSize: '11px', fontWeight: '700', padding: '6px 10px', borderRadius: '10px', textAlign: 'center' },
+  imgCardSmallCol: { display: 'flex', flexDirection: 'column', gap: '14px' },
+  imgCardSmall: { position: 'relative', borderRadius: '18px', overflow: 'hidden', width: '150px', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.2)' },
+  imgSmall: { width: '100%', height: '115px', objectFit: 'cover', display: 'block' },
+  imgSmallLabel: { background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(6px)', color: 'white', fontSize: '10px', fontWeight: '700', padding: '5px 8px', textAlign: 'center' },
+
+  // About glass
+  aboutGlass: { background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '24px', padding: '36px 44px', textAlign: 'center' },
+  aboutTitle: { color: '#FFC107', fontSize: '22px', fontWeight: '800', margin: '0 0 14px' },
+  aboutDesc: { color: 'rgba(255,255,255,0.8)', fontSize: '15px', lineHeight: '1.85', margin: 0 },
+
+  // Features
+  featuresRow: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' },
+  featureGlass: { background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '20px', padding: '26px 20px', textAlign: 'center' },
+  featureIcon: { fontSize: '32px', marginBottom: '12px' },
+  featureTitle: { color: '#FFC107', fontWeight: '800', fontSize: '14px', marginBottom: '8px' },
+  featureDesc: { color: 'rgba(255,255,255,0.7)', fontSize: '12px', lineHeight: '1.6' },
+
+  // Image strip
+  imageStrip: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' },
+  stripImg: { width: '100%', height: '110px', objectFit: 'cover', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.15)', filter: 'brightness(0.85)' },
   card: { backgroundColor: 'white', padding: '40px', borderRadius: '25px', width: '360px', textAlign: 'center', zIndex: 10, boxShadow: '0 20px 50px rgba(0,0,0,0.4)' },
   roleBtn: { width: '100%', padding: '14px', margin: '10px 0', borderRadius: '12px', border: '2px solid #6A1B9A', color: '#6A1B9A', cursor: 'pointer', background: 'none', fontWeight: 'bold' },
   input: { width: '100%', padding: '14px', margin: '10px 0', borderRadius: '10px', border: '1px solid #ddd', fontSize: '15px', outline: 'none' },
