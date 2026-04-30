@@ -6,7 +6,7 @@ const Login = ({ onLoginSuccess }) => {
   const [view, setView] = useState('landing');
   const [isRegistering, setIsRegistering] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({ username: '', email: '', password: '' });
+  const [formData, setFormData] = useState({ username: '', email: '', password: '', confirmPassword: '' });
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   // --- CAPTCHA States ---
@@ -42,6 +42,7 @@ const Login = ({ onLoginSuccess }) => {
   const hasMinLen = formData.password.length >= 8 && formData.password.length <= 15;
   const hasUpper = /[A-Z]/.test(formData.password);
   const hasSpecial = /[!@#$%^&*]/.test(formData.password);
+  const hasConfirmMatch = formData.password === formData.confirmPassword;
 
   const handleAuth = async (e) => {
     e.preventDefault();
@@ -71,6 +72,11 @@ const Login = ({ onLoginSuccess }) => {
       return;
     }
 
+    if (isRegistering && !hasConfirmMatch) {
+      alert("Passwords do not match.");
+      return;
+    }
+
     try {
       const endpoint = isRegistering ? 'signup' : 'login';
       const payload = isRegistering 
@@ -96,9 +102,9 @@ const Login = ({ onLoginSuccess }) => {
         <div style={styles.hero}>
           <div style={styles.floatingBoxTopLeft}><img src={babyVaccine} alt="Vaccine" style={styles.floatingImg} /><p style={styles.imgLabel}>Safe Dosing</p></div>
           <div style={styles.floatingBoxTopRight}><img src={medicalCheckup} alt="Checkup" style={styles.floatingImg} /><p style={styles.imgLabel}>Full Checkup</p></div>
-          <div style={styles.logoCircle}>💉</div>
-          <h1 style={styles.titleLanding}>Vacci_Care</h1>
-          <p style={styles.subtitleLanding}>Ensuring a healthier tomorrow for your little ones.</p>
+          <div style={styles.logoCircle}>🏥</div>
+          <h1 style={styles.titleLanding}>Malaprabha Hospital Bailhongal</h1>
+          <p style={styles.subtitleLanding}>Leading family vaccination care for Bailhongal and surrounding communities.</p>
           <button style={styles.mainBtnLarge} onClick={() => setView('selection')}>Get Connected With Us</button>
           <div style={styles.floatingBoxBottomLeft}><img src={doctorImage} alt="Doctor" style={styles.floatingImg} /><p style={styles.imgLabel}>Expert Doctors</p></div>
           <div style={styles.floatingBoxBottomRight}><img src={clinicPlay} alt="Clinic" style={styles.floatingImg} /><p style={styles.imgLabel}>Friendly Clinic</p></div>
@@ -131,18 +137,33 @@ const Login = ({ onLoginSuccess }) => {
                     type={showPassword ? "text" : "password"} 
                     placeholder="Password" 
                     value={formData.password} 
-                    onChange={(e)=>setFormData({...formData, password: e.target.value})}
+                    onChange={(e) => { setFormData({...formData, password: e.target.value}); setIsPasswordFocused(true); }}
                     onFocus={() => setIsPasswordFocused(true)}
                     required 
                   />
                   <span style={styles.eyeIcon} onClick={() => setShowPassword(!showPassword)}>{showPassword ? "👁️‍" : "👁️"}</span>
                 </div>
 
-                {isRegistering && isPasswordFocused && (
+                {isRegistering && (
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      style={styles.input}
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Confirm Password"
+                      value={formData.confirmPassword}
+                      onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                      onFocus={() => setIsPasswordFocused(true)}
+                      required
+                    />
+                  </div>
+                )}
+
+                {view !== 'adminLogin' && isPasswordFocused && formData.password.length > 0 && (
                   <div style={styles.hintContainer}>
-                    {!hasMinLen && <p style={styles.hintText}>• 8 to 15 characters</p>}
-                    {!hasUpper && <p style={styles.hintText}>• At least one uppercase letter</p>}
-                    {!hasSpecial && <p style={styles.hintText}>• At least one special character (!@#$%^&*)</p>}
+                    {!hasMinLen && <p style={styles.hintItem}>• 8 to 15 characters</p>}
+                    {!hasUpper && <p style={styles.hintItem}>• At least one uppercase letter</p>}
+                    {!hasSpecial && <p style={styles.hintItem}>• At least one special character (!@#$%^&*)</p>}
+                    {isRegistering && formData.confirmPassword && !hasConfirmMatch && <p style={styles.hintItem}>• Passwords must match</p>}
                   </div>
                 )}
 
@@ -183,7 +204,7 @@ const Login = ({ onLoginSuccess }) => {
 
                 <button style={styles.mainBtn} type="submit">{isRegistering ? 'Sign Up' : 'Login'}</button>
               </form>
-              {view !== 'adminLogin' && <p style={styles.toggle} onClick={() => {setIsRegistering(!isRegistering); setIsPasswordFocused(false);}}>{isRegistering ? "Already have an account? Login" : "New parent? Register here"}</p>}
+              {view !== 'adminLogin' && <p style={styles.toggle} onClick={() => { setIsRegistering(!isRegistering); setIsPasswordFocused(false); setFormData({ username: '', email: '', password: '', confirmPassword: '' }); }}>{isRegistering ? "Already have an account? Login" : "New parent? Register here"}</p>}
               <p style={styles.back} onClick={() => setView('selection')}>← Back</p>
             </>
           )}
@@ -196,9 +217,9 @@ const Login = ({ onLoginSuccess }) => {
 const styles = {
   container: { height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', fontFamily: '"Segoe UI", sans-serif', overflow: 'hidden', position: 'relative' },
   hero: { textAlign: 'center', color: 'white', zIndex: 1 },
-  logoCircle: { fontSize: '50px', background: 'white', width: '90px', height: '90px', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '0 auto 20px', boxShadow: '0 8px 20px rgba(0,0,0,0.3)' },
-  titleLanding: { fontSize: '65px', margin: '0', fontWeight: 'bold' },
-  subtitleLanding: { fontSize: '22px', marginBottom: '35px', fontWeight: '300' },
+  logoCircle: { fontSize: '50px', background: 'rgba(255,255,255,0.95)', width: '90px', height: '90px', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '0 auto 20px', boxShadow: '0 8px 20px rgba(0,0,0,0.25)', color: '#6A1B9A' },
+  titleLanding: { fontSize: '65px', margin: '0', fontWeight: '900', fontFamily: 'Georgia, serif', letterSpacing: '0.04em', textShadow: '0 3px 16px rgba(0,0,0,0.2)' },
+  subtitleLanding: { fontSize: '22px', margin: '18px auto 35px', maxWidth: '760px', fontWeight: '300', lineHeight: '1.4' },
   mainBtnLarge: { padding: '18px 45px', backgroundColor: '#6A1B9A', color: 'white', border: 'none', borderRadius: '50px', cursor: 'pointer', fontSize: '20px', fontWeight: 'bold' },
   floatingBoxTopLeft: { position: 'absolute', top: '5%', left: '5%', width: '170px', background: 'white', padding: '10px', borderRadius: '15px', boxShadow: '0 10px 25px rgba(0,0,0,0.3)' },
   floatingBoxTopRight: { position: 'absolute', top: '8%', right: '8%', width: '170px', background: 'white', padding: '10px', borderRadius: '15px', boxShadow: '0 10px 25px rgba(0,0,0,0.3)' },
@@ -213,8 +234,8 @@ const styles = {
   mainBtn: { width: '100%', padding: '14px', background: '#6A1B9A', color: 'white', border: 'none', borderRadius: '10px', cursor: 'pointer', marginTop: '15px', fontWeight: 'bold' },
   back: { marginTop: '20px', cursor: 'pointer', color: '#6A1B9A', fontWeight: '600' },
   toggle: { marginTop: '15px', fontSize: '14px', cursor: 'pointer', color: '#7B1FA2', fontWeight: '600' },
-  hintContainer: { textAlign: 'left', marginTop: '-5px', marginBottom: '10px', paddingLeft: '5px' },
-  hintText: { color: '#D32F2F', fontSize: '12px', margin: '2px 0', fontWeight: '500' },
+  hintContainer: { textAlign: 'left', marginTop: '-5px', marginBottom: '10px', padding: '10px 14px', background: '#fff8e1', borderRadius: '10px', border: '1px solid #ffe082' },
+  hintItem: { color: '#c62828', fontSize: '12px', margin: '4px 0', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px', animation: 'fadeIn 0.3s ease' },
   
   // CAPTCHA STYLES
   captchaWrapper: { margin: '15px 0', textAlign: 'left' },

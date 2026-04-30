@@ -51,7 +51,7 @@ const UserNotifications = ({ userEmail }) => {
               <X style={{cursor:'pointer'}} onClick={() => setShowPopup(false)} />
             </div>
             <p style={styles.popupText}>"{activeMsg.message}"</p>
-            <p style={styles.popupHospital}>From: VacciCare (Malaprabha Hospital)</p>
+            <p style={styles.popupHospital}>From: Malaprabha Hospital, Bailhongal</p>
             <button style={styles.ackBtn} onClick={() => handleMarkRead(activeMsg._id)}>
               Got it, thanks!
             </button>

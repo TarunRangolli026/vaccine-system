@@ -48,12 +48,12 @@ const History = ({ selectedChild, vaccineRoadmap, onBack }) => {
                 {/* Header Section */}
                 <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:'10px'}}>
                     <div style={{textAlign:'left'}}>
-                        <h3 style={{margin:0, color:'#1A237E', fontSize:'16px'}}>Malaprabha Multispeciallity Hospital</h3>
+                        <h3 style={{margin:0, color:'#1A237E', fontSize:'16px'}}>Malaprabha Hospital Bailhongal</h3>
                         <p style={{margin:0, fontSize:'10px', color:'#555'}}>Bailhongal, Karnataka</p>
                     </div>
                     <div style={{textAlign:'right'}}>
-                        <div style={{fontWeight:'bold', color:'#6A1B9A', fontSize:'14px'}}>Vacci_Care</div>
-                        <div style={{fontSize:'8px', color:'#999'}}>DIGITAL HEALTH LOGO</div>
+                        <div style={{fontWeight:'bold', color:'#6A1B9A', fontSize:'14px'}}>Malaprabha Hospital Bailhongal</div>
+                        <div style={{fontSize:'8px', color:'#999'}}>Digital Health Portal</div>
                     </div>
                 </div>
 
@@ -95,7 +95,7 @@ const History = ({ selectedChild, vaccineRoadmap, onBack }) => {
                 </div>
                 
                 <div style={{marginTop:'20px', fontSize:'9px', color:'#aaa', textAlign:'center'}}>
-                    Generated on {today.toLocaleDateString()} via Vacci_Care Digital Portal
+                    Generated on {today.toLocaleDateString()} via Malaprabha Hospital Digital Portal
                 </div>
             </div>
 

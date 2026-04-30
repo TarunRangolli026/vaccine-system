@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import History from './History'; 
-import UserNotifications from './UserNotifications';
-
 
 // --- NEW HELPER COMPONENT: ALERT CAROUSEL ---
 const AlertCarousel = ({ children, roadmap }) => {
@@ -63,6 +61,8 @@ const Dashboard = ({ user, onLogout }) => {
   const [viewMode, setViewMode] = useState('menu'); 
   const [updateSubTab, setUpdateSubTab] = useState('bookings');
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [hasExistingProfile, setHasExistingProfile] = useState(false);
 
   const [adminNotifications, setAdminNotifications] = useState([]);
 
@@ -78,7 +78,7 @@ const Dashboard = ({ user, onLogout }) => {
     phone: user?.phone || '' 
   });
 
-  const [children, setChildren] = useState([]);
+  const [children, setChildren] = useState(user?.children || []);
   
   const lastChildRef = useRef(null);
   const today = new Date();
@@ -125,7 +125,9 @@ const Dashboard = ({ user, onLogout }) => {
             email: res.data.email || userEmail, 
             phone: res.data.phone || '' 
           });
-          if (res.data.children) setChildren(res.data.children);
+          setChildren(Array.isArray(res.data.children) ? res.data.children : []);
+          const profileSaved = Boolean(res.data.phone || (Array.isArray(res.data.children) && res.data.children.length > 0));
+          setHasExistingProfile(profileSaved);
         }
       } catch (err) { console.log("Profile load error"); }
     };
@@ -269,14 +271,25 @@ const Dashboard = ({ user, onLogout }) => {
 
   const saveToMongo = async (type) => {
     try {
-      await axios.post('http://localhost:5000/api/update-profile', {
-        email: profileData.email, 
-        fullName: profileData.fullName, 
+      const res = await axios.post('http://localhost:5000/api/update-profile', {
+        email: profileData.email,
+        fullName: profileData.fullName,
         phone: profileData.phone,
-        numChildren: children.length, 
-        children: children 
+        numChildren: children.length,
+        children: children
       });
+      const updatedUser = {
+        ...(typeof user === 'object' ? user : {}),
+        fullName: profileData.fullName,
+        phone: profileData.phone,
+        children: Array.isArray(res.data.children) ? res.data.children : children
+      };
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+      }
       alert(type === 'parent' ? "✅ Parent Profile Updated!" : "✅ Child Profiles Updated!");
+      setIsEditing(false);
+      setHasExistingProfile(true);
       setActiveTab('main');
     } catch (err) { alert("Error saving information."); }
   };
@@ -284,14 +297,14 @@ const Dashboard = ({ user, onLogout }) => {
   return (
     <div style={styles.container}>
       <nav style={styles.navbar}>
-        <div style={styles.logoText} onClick={() => {setSelectedChild(null); setActiveTab('main'); setViewMode('menu');}}>Vacci_Care</div>
+        <div style={styles.logoText} onClick={() => {setSelectedChild(null); setActiveTab('main'); setViewMode('menu');}}>Malaprabha Multispeciality Hospital</div>
         <div style={styles.profileBtn} onClick={() => setShowDropdown(!showDropdown)}>
             <div style={styles.avatarCircle}>{profileData.fullName ? profileData.fullName[0].toUpperCase() : "U"}</div>
             <span>{String(profileData.fullName || profileData.email || "User")} ▾</span>
             {showDropdown && (
                 <div style={styles.dropdown}>
-                    <div style={styles.dropItem} onClick={() => {setActiveTab('profile'); setShowDropdown(false);}}>👤 Profile</div>
-                    <div style={styles.dropItem} onClick={() => {setActiveTab('children'); setShowDropdown(false);}}>👶 Children</div>
+                    <div style={styles.dropItem} onClick={() => {setActiveTab('profile'); setIsEditing(false); setShowDropdown(false);}}>👤 Profile</div>
+                    <div style={styles.dropItem} onClick={() => {setActiveTab('children'); setIsEditing(false); setShowDropdown(false);}}>👶 Children</div>
                     <div style={{...styles.dropItem, color: 'red'}} onClick={onLogout}>🚪 Logout</div>
                 </div>
             )}
@@ -565,23 +578,28 @@ const Dashboard = ({ user, onLogout }) => {
         {activeTab === 'children' && (
             <div style={{width:'100%', maxWidth:'600px'}}>
                 <button onClick={() => setActiveTab('main')} style={styles.backLink}>← Back to Dashboard</button>
-                <button style={styles.addBtn} onClick={() => setChildren([...children, {id: `temp-${Date.now()}`, name:'', dob:'', gender:'', weight:'', age:''}])}>➕ Add Child Profile</button>
+                <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'15px'}}>
+                  <button style={styles.addBtn} onClick={() => { setChildren([...children, {id: `temp-${Date.now()}`, name:'', dob:'', gender:'', weight:'', age:''}]); setIsEditing(true); }}>➕ Add Child</button>
+                  {hasExistingProfile && !isEditing && (
+                    <button style={{...styles.addBtn, backgroundColor:'orange'}} onClick={() => setIsEditing(true)}>✏️ Edit Children</button>
+                  )}
+                </div>
                 {children.map((child, index) => (
                     <div key={child._id || child.id} style={styles.glassCard} ref={index === children.length - 1 ? lastChildRef : null}>
                         <div style={{display:'flex', justifyContent:'space-between'}}>
                             <h3 style={{color:'#4A148C'}}>👶 Child Profile #{index+1}</h3>
-                            <button onClick={() => setChildren(children.filter(c => (c._id || c.id) !== (child._id || child.id)))} style={{color:'red', border:'none', background:'none', cursor:'pointer'}}>Remove</button>
+                            <button onClick={() => setChildren(children.filter(c => (c._id || c.id) !== (child._id || child.id)))} style={{color:'red', border:'none', background:'none', cursor:'pointer', fontWeight:'bold'}}>Remove</button>
                         </div>
                         <label style={styles.label}>Full Name</label>
-                        <input style={styles.input} value={child.name} onChange={(e)=>handleChildChange(child._id || child.id, 'name', e.target.value)} />
+                        <input style={styles.input} value={child.name} readOnly={hasExistingProfile && !isEditing && !!child._id} onChange={(e)=>handleChildChange(child._id || child.id, 'name', e.target.value)} />
                         <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'15px', marginTop:'15px'}}>
                             <div>
                                 <label style={styles.label}>Date of Birth</label>
-                                <input style={styles.input} type="date" min={minDateLimit} max={maxDateLimit} value={child.dob} onChange={(e)=>handleChildChange(child._id || child.id, 'dob', e.target.value)} />
+                                <input style={styles.input} type="date" min={minDateLimit} max={maxDateLimit} value={child.dob} readOnly={hasExistingProfile && !isEditing && !!child._id} onChange={(e)=>handleChildChange(child._id || child.id, 'dob', e.target.value)} />
                             </div>
                             <div>
                                 <label style={styles.label}>Gender</label>
-                                <select style={styles.input} value={child.gender} onChange={(e)=>handleChildChange(child._id || child.id, 'gender', e.target.value)}>
+                                <select style={styles.input} value={child.gender} disabled={hasExistingProfile && !isEditing && !!child._id} onChange={(e)=>handleChildChange(child._id || child.id, 'gender', e.target.value)}>
                                     <option value="">Select</option>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
@@ -591,7 +609,7 @@ const Dashboard = ({ user, onLogout }) => {
                         <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'15px', marginTop:'15px'}}>
                             <div>
                                 <label style={styles.label}>Weight (kg)</label>
-                                <input style={{...styles.input, borderColor: (parseFloat(child.weight) > 20) ? 'red' : '#ddd'}} type="number" value={child.weight} onChange={(e)=>handleChildChange(child._id || child.id, 'weight', e.target.value)} />
+                                <input style={{...styles.input, borderColor: (parseFloat(child.weight) > 20) ? 'red' : '#ddd'}} type="number" value={child.weight} readOnly={hasExistingProfile && !isEditing && !!child._id} onChange={(e)=>handleChildChange(child._id || child.id, 'weight', e.target.value)} />
                             </div>
                             <div>
                                 <label style={styles.label}>Calculated Age</label>
@@ -600,7 +618,10 @@ const Dashboard = ({ user, onLogout }) => {
                         </div>
                     </div>
                 ))}
-                <button style={{...styles.saveBtn, opacity: isFormInvalid() ? 0.5 : 1}} onClick={() => saveToMongo('children')} disabled={isFormInvalid()}>💾 Save Information</button>
+                <div style={{display:'flex', gap:'10px'}}>
+                  {isEditing && <button style={{...styles.saveBtn, backgroundColor:'#ccc', color:'#333'}} onClick={() => setIsEditing(false)}>Cancel</button>}
+                  <button style={{...styles.saveBtn, opacity: isFormInvalid() ? 0.5 : 1}} onClick={() => saveToMongo('children')} disabled={isFormInvalid()}>💾 Save Information</button>
+                </div>
             </div>
         )}
 
@@ -608,14 +629,20 @@ const Dashboard = ({ user, onLogout }) => {
             <div style={{width:'100%', maxWidth:'600px'}}>
                 <button onClick={() => setActiveTab('main')} style={styles.backLink}>← Back to Dashboard</button>
                 <div style={styles.glassCard}>
-                    <h3 style={{color:'#4A148C', textAlign:'center'}}>Parent Profile</h3>
+                    <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'15px'}}>
+                      <h3 style={{color:'#4A148C', margin:0}}>Parent Profile</h3>
+                      {hasExistingProfile && !isEditing && (
+                        <button style={{padding:'8px 18px', backgroundColor:'orange', color:'white', border:'none', borderRadius:'8px', fontWeight:'bold', cursor:'pointer'}} onClick={() => setIsEditing(true)}>✏️ Edit Profile</button>
+                      )}
+                    </div>
                     <label style={styles.label}>Full Name</label>
-                    <input style={styles.input} value={profileData.fullName} onChange={(e)=>setProfileData({...profileData, fullName:e.target.value})} />
+                    <input style={styles.input} value={profileData.fullName} readOnly={!isEditing && hasExistingProfile} onChange={(e)=>setProfileData({...profileData, fullName:e.target.value})} />
                     
                     <label style={{...styles.label, marginTop:'15px'}}>Phone Number</label>
                     <div style={{ display: 'flex', gap: '8px' }}>
                       <select 
                         style={{ padding: '10px', borderRadius: '10px', border: '1px solid #ddd', backgroundColor: '#f8f9fa', fontWeight: 'bold' }}
+                        disabled={!isEditing && hasExistingProfile}
                         value={profileData.phone.startsWith("+1") ? "+1" : "+91"}
                         onChange={(e) => {
                           const code = e.target.value;
@@ -630,6 +657,7 @@ const Dashboard = ({ user, onLogout }) => {
                         style={styles.input} 
                         placeholder="10 digits starting with 6-9"
                         maxLength="10"
+                        readOnly={!isEditing && hasExistingProfile}
                         value={profileData.phone.replace(/^\+91|^\+1/, "")} 
                         onChange={(e)=>{
                           const val = e.target.value.replace(/\D/g, '');
@@ -641,14 +669,18 @@ const Dashboard = ({ user, onLogout }) => {
                     {profileData.phone.length > 3 && isPhoneInvalid() && (
                       <span style={{color: 'red', fontSize: '11px'}}>Must start with 6,7,8,9 and be 10 digits</span>
                     )}
-
-                    <button 
-                      style={{...styles.saveBtn, marginTop:'20px', opacity: isPhoneInvalid() ? 0.5 : 1}} 
-                      onClick={() => saveToMongo('parent')}
-                      disabled={isPhoneInvalid()}
-                    >
-                      Save Profile
-                    </button>
+                    {(!hasExistingProfile || isEditing) && (
+                      <div style={{display:'flex', gap:'10px', marginTop:'20px'}}>
+                        {isEditing && <button style={{...styles.saveBtn, backgroundColor:'#ccc', color:'#333'}} onClick={() => setIsEditing(false)}>Cancel</button>}
+                        <button 
+                          style={{...styles.saveBtn, opacity: isPhoneInvalid() ? 0.5 : 1}} 
+                          onClick={() => saveToMongo('parent')}
+                          disabled={isPhoneInvalid()}
+                        >
+                          Save Profile
+                        </button>
+                      </div>
+                    )}
                 </div>
             </div>
         )}

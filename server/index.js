@@ -208,6 +208,37 @@ app.post('/api/book-appointment', async (req, res) => {
     }
 });
 
+// --- 5b. RESCHEDULE APPOINTMENT ---
+app.post('/api/reschedule-appointment', async (req, res) => {
+    try {
+        const { parentEmail, childName, vaccineName, appointmentDate, timeSlot } = req.body;
+
+        await Appointment.findOneAndUpdate(
+            { parentEmail, childName, vaccineName },
+            { appointmentDate, timeSlot, status: 'pending' },
+            { upsert: true, new: true }
+        );
+
+        await User.updateOne(
+            { email: parentEmail, 'children.name': childName },
+            {
+                $set: {
+                    'children.$.pendingAppointment': {
+                        vaccineName,
+                        date: appointmentDate,
+                        timeSlot,
+                        status: 'pending'
+                    }
+                }
+            }
+        );
+
+        res.status(200).json({ message: 'Appointment rescheduled!' });
+    } catch (err) {
+        res.status(500).json({ error: 'Reschedule failed' });
+    }
+});
+
 // --- 6. ADMIN: GET ALL APPOINTMENTS ---
 app.get('/api/admin/appointments', async (req, res) => {
   try {

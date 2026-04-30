@@ -17,7 +17,7 @@ const AdminDashboard = ({ onLogout }) => {
           style={{ ...styles.brand, cursor: 'pointer' }}
         >
           <Hospital color="#1a237e" size={28} />
-          <span style={styles.brandText}>VacciCare Pro</span>
+          <span style={styles.brandText}>Malaprabha Hospital Bailhongal - Admin</span>
         </div>
 
         {/* Profile Trigger */}
@@ -42,7 +42,7 @@ const AdminDashboard = ({ onLogout }) => {
           </div>
           <div style={styles.hospitalInfo}>
             <Hospital size={16} color="#1a237e" />
-            <span>Malaprabha Multispeciality Hospital, Bailhongal</span>
+            <span>Malaprabha Hospital Bailhongal</span>
           </div>
           
           <button style={styles.logoutBtn} onClick={onLogout}>
@@ -57,7 +57,7 @@ const AdminDashboard = ({ onLogout }) => {
           <>
             <header style={{ marginBottom: '40px' }}>
               <h1 style={styles.welcomeText}>Medical Administration Panel</h1>
-              <p style={styles.subText}>Malaprabha Multispeciality Systems | Oversight Dashboard</p>
+              <p style={styles.subText}>Malaprabha Hospital Bailhongal | Oversight Dashboard</p>
             </header>
 
             <div style={styles.cardGrid}>
