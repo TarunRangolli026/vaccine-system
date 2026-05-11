@@ -6,6 +6,7 @@ const Login = ({ onLoginSuccess }) => {
   const [view, setView] = useState('landing');
   const [isRegistering, setIsRegistering] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({ username: '', email: '', password: '', confirmPassword: '' });
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
@@ -58,6 +59,10 @@ const Login = ({ onLoginSuccess }) => {
     setCaptchaError("");
 
     if (view === 'adminLogin') {
+      if (formData.password !== formData.confirmPassword) {
+        alert("Passwords do not match.");
+        return;
+      }
       if (formData.email === 'Sharan@gmail.com' && formData.password === 'admin@123') {
         onLoginSuccess({ fullName: 'Dr. Sharan', role: 'admin' });
       } else {
@@ -111,7 +116,7 @@ const Login = ({ onLoginSuccess }) => {
             <div style={styles.navLogo}>
               <span style={styles.navLogoIcon}>🏥</span>
               <div>
-                <div style={styles.navLogoText}>Malaprabha Multispeciality Hospital</div>
+                <div style={styles.navLogoText}>Tarun Hospital</div>
                 <div style={styles.navLogoSub}>Bailhongal, Karnataka</div>
               </div>
             </div>
@@ -124,7 +129,7 @@ const Login = ({ onLoginSuccess }) => {
               <span style={styles.heroPill}>🌟 Trusted by 500+ Families in Bailhongal</span>
               <h1 style={styles.heroTitle}>Smart Vaccination<br/><span style={styles.heroAccent}>Care for Your Child</span></h1>
               <p style={styles.heroDesc}>
-                Malaprabha Multispeciality Hospital brings you a digital vaccination management portal —
+                Tarun Hospital brings you a digital vaccination management portal —
                 track your child's immunization milestones, book appointments with expert doctors,
                 receive real-time reminders, and access official health certificates, all from one place.
               </p>
