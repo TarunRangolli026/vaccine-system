@@ -116,7 +116,7 @@ const Login = ({ onLoginSuccess }) => {
             <div style={styles.navLogo}>
               <span style={styles.navLogoIcon}>🏥</span>
               <div>
-                <div style={styles.navLogoText}>Malaprabha Multispeciality Hospital</div>
+                <div style={styles.navLogoText}>Mahadev Multispeciality Hospital</div>
                 <div style={styles.navLogoSub}>Bailhongal, Karnataka</div>
               </div>
             </div>
@@ -129,7 +129,7 @@ const Login = ({ onLoginSuccess }) => {
               <span style={styles.heroPill}>🌟 Trusted by 500+ Families in Bailhongal</span>
               <h1 style={styles.heroTitle}>Smart Vaccination<br/><span style={styles.heroAccent}>Care for Your Child</span></h1>
               <p style={styles.heroDesc}>
-                Malaprabha Multispeciality Hospital brings you a digital vaccination management portal —
+                Mahadev Multispeciality Hospital brings you a digital vaccination management portal —
                 track your child's immunization milestones, book appointments with expert doctors,
                 receive real-time reminders, and access official health certificates, all from one place.
               </p>
