@@ -59,10 +59,6 @@ const Login = ({ onLoginSuccess }) => {
     setCaptchaError("");
 
     if (view === 'adminLogin') {
-      if (formData.password !== formData.confirmPassword) {
-        alert("Passwords do not match.");
-        return;
-      }
       if (formData.email === 'Sharan@gmail.com' && formData.password === 'admin@123') {
         onLoginSuccess({ fullName: 'Dr. Sharan', role: 'admin' });
       } else {
@@ -229,7 +225,7 @@ const Login = ({ onLoginSuccess }) => {
                   <span style={styles.eyeIcon} onClick={() => setShowPassword(!showPassword)}>{showPassword ? "👁️‍" : "👁️"}</span>
                 </div>
 
-                {isRegistering && (
+                {view !== 'adminLogin' && isRegistering && (
                   <div style={{ position: 'relative' }}>
                     <input
                       style={styles.input}
