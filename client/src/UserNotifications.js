@@ -10,7 +10,7 @@ const UserNotifications = ({ userEmail }) => {
   // 1. Fetch messages for this specific parent (e.g., Tarun)
   const fetchMessages = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/user/notifications/${userEmail}`);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/user/notifications/${userEmail}`);
       setNotifications(res.data);
 
       // Check for a 'unread' message to show the pop-up
@@ -31,7 +31,7 @@ const UserNotifications = ({ userEmail }) => {
   // 2. Mark as read when "Understood" is clicked
   const handleMarkRead = async (id) => {
     try {
-      await axios.put(`http://localhost:5000/api/user/mark-read/${id}`);
+      await axios.put(`${process.env.REACT_APP_API_URL}/api/user/mark-read/${id}`);
       setShowPopup(false);
       fetchMessages(); // Refresh to move it to history
     } catch (err) {

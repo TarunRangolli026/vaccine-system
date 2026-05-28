@@ -84,7 +84,7 @@ const Login = ({ onLoginSuccess }) => {
         ? { email: formData.email, password: formData.password, fullName: formData.username }
         : { email: formData.email, password: formData.password };
 
-      const res = await axios.post(`http://13.126.218.232:5000/api/${endpoint}`, payload);
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/${endpoint}`, payload);
       
       if (isRegistering) {
         onLoginSuccess({ email: formData.email, fullName: formData.username, role: 'parent', children: [] });

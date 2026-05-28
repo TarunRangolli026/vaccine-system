@@ -15,7 +15,7 @@ const AdminNotification = () => {
       try {
         setLoading(true);
         // FIXED: URL updated to match the latest backend index.js
-        const res = await axios.get('http://localhost:5000/api/admin/appointments');
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/admin/appointments`);
         setAppointments(res.data);
       } catch (err) {
         console.error("Error fetching notification list:", err);
@@ -37,7 +37,7 @@ const AdminNotification = () => {
       // Use childName or name (safety fallback for your schema)
       const targetChild = selectedApp.childName || selectedApp.name;
 
-      await axios.post('http://localhost:5000/api/admin/send-notif', {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/admin/send-notif`, {
         parentEmail: selectedApp.parentEmail,
         childName: targetChild,
         message: message

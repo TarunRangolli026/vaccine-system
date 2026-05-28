@@ -11,7 +11,7 @@ const AppointmentStatus = () => {
     setLoading(true);
     try {
       // Ensure your backend server is running on port 5000
-      const res = await axios.get('http://localhost:5000/api/admin/appointments');
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/admin/appointments`);
       console.log("Data received from server:", res.data);
       setAppointments(res.data);
     } catch (err) {
@@ -27,7 +27,7 @@ const AppointmentStatus = () => {
 
   const handleProceed = async (appointmentId) => {
     try {
-      await axios.put(`http://localhost:5000/api/admin/update-appointment`, {
+      await axios.put(`${process.env.REACT_APP_API_URL}/api/admin/update-appointment`, {
         appointmentId,
         status: 'completed'
       });
