@@ -118,7 +118,7 @@ const Dashboard = ({ user, onLogout }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/get-profile/${userEmail}`);
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/get-profile/${userEmail}`);
         if (res.data) {
           setProfileData({ 
             fullName: res.data.fullName || '', 
@@ -137,7 +137,7 @@ const Dashboard = ({ user, onLogout }) => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/user/notifications/${userEmail}`);
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/user/notifications/${userEmail}`);
         setAdminNotifications(res.data);
       } catch (err) { console.error("Error fetching notifications:", err); }
     };
@@ -146,7 +146,7 @@ const Dashboard = ({ user, onLogout }) => {
 
   const markAsRead = async (id) => {
     try {
-      await axios.put(`http://localhost:5000/api/user/mark-read/${id}`);
+      await axios.put(`${process.env.REACT_APP_API_URL}/api/user/mark-read/${id}`);
       setAdminNotifications(prev => 
         prev.map(n => n._id === id ? { ...n, status: 'read' } : n)
       );
@@ -195,7 +195,7 @@ const Dashboard = ({ user, onLogout }) => {
     }
     try {
       const endpoint = isRescheduling ? '/api/reschedule-appointment' : '/api/book-appointment';
-      await axios.post(`http://localhost:5000${endpoint}`, {
+      await axios.post(`${process.env.REACT_APP_API_URL}${endpoint}`, {
         parentEmail: userEmail,
         childName: selectedChild.name,
         vaccineName: eligibility.vaccine, 
@@ -271,7 +271,7 @@ const Dashboard = ({ user, onLogout }) => {
 
   const saveToMongo = async (type) => {
     try {
-      const res = await axios.post('http://localhost:5000/api/update-profile', {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/update-profile`, {
         email: profileData.email,
         fullName: profileData.fullName,
         phone: profileData.phone,

@@ -18,12 +18,12 @@ const validatePassword = (password) => {
   const regex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{8,15})/;
   return regex.test(password);
 };
+const mongoURI = process.env.MONGO_URI;
 
-// --- MONGODB CONNECTION ---
-mongoose.connect('mongodb://127.0.0.1:27017/vacci_care_new')
-  .then(() => console.log("✅ Connected to New Database: vacci_care_new"))
+mongoose.connect(mongoURI)
+  .then(() => console.log("✅ Connected to Database"))
   .catch(err => console.error("❌ MongoDB Connection Error:", err));
-
+  
 // --- 1. SIGNUP (UPDATED WITH CONSTRAINTS) ---
 app.post('/api/signup', async (req, res) => {
   const { email, password, fullName } = req.body;

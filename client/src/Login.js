@@ -59,10 +59,6 @@ const Login = ({ onLoginSuccess }) => {
     setCaptchaError("");
 
     if (view === 'adminLogin') {
-      if (formData.password !== formData.confirmPassword) {
-        alert("Passwords do not match.");
-        return;
-      }
       if (formData.email === 'Sharan@gmail.com' && formData.password === 'admin@123') {
         onLoginSuccess({ fullName: 'Dr. Sharan', role: 'admin' });
       } else {
@@ -88,7 +84,7 @@ const Login = ({ onLoginSuccess }) => {
         ? { email: formData.email, password: formData.password, fullName: formData.username }
         : { email: formData.email, password: formData.password };
 
-      const res = await axios.post(`http://localhost:5000/api/${endpoint}`, payload);
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/${endpoint}`, payload);
       
       if (isRegistering) {
         onLoginSuccess({ email: formData.email, fullName: formData.username, role: 'parent', children: [] });
@@ -229,7 +225,7 @@ const Login = ({ onLoginSuccess }) => {
                   <span style={styles.eyeIcon} onClick={() => setShowPassword(!showPassword)}>{showPassword ? "👁️‍" : "👁️"}</span>
                 </div>
 
-                {isRegistering && (
+                {view !== 'adminLogin' && isRegistering && (
                   <div style={{ position: 'relative' }}>
                     <input
                       style={styles.input}

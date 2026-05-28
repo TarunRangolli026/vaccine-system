@@ -17,7 +17,7 @@ const PatientHistory = () => {
     const fetchAllData = async () => {
       try {
         // This matches the app.get('/api/admin/appointments') in your index.js
-        const response = await axios.get('http://localhost:5000/api/admin/appointments');
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/admin/appointments`);
         setAppointments(response.data);
       } catch (error) {
         console.error("Error fetching patient history:", error);
