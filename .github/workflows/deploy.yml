@@ -8,7 +8,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
@@ -19,11 +18,4 @@ jobs:
           script: |
             cd ~/vaccine-system
             git pull origin main
-
-            cd ~/vaccine-system/server
-            npm install
-            pm2 restart vaccine-backend --update-env
-
-            cd ~/vaccine-system/client
-            npm install
-            pm2 restart vaccine-frontend
+            docker compose up -d --build
