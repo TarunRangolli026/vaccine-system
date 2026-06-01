@@ -112,7 +112,7 @@ const Login = ({ onLoginSuccess }) => {
             <div style={styles.navLogo}>
               <span style={styles.navLogoIcon}>🏥</span>
               <div>
-                <div style={styles.navLogoText}>Shri Ram Multispeciality Hospital</div>
+                <div style={styles.navLogoText}> Multi speciality Hospital</div>
                 <div style={styles.navLogoSub}>Bailhongal, Karnataka</div>
               </div>
             </div>
