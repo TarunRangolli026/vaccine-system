@@ -112,7 +112,7 @@ const Login = ({ onLoginSuccess }) => {
             <div style={styles.navLogo}>
               <span style={styles.navLogoIcon}>🏥</span>
               <div>
-                <div style={styles.navLogoText}>Maruti Multispeciality Hospital</div>
+                <div style={styles.navLogoText}>Hanuman Multispeciality Hospital</div>
                 <div style={styles.navLogoSub}>Bailhongal, Karnataka</div>
               </div>
             </div>
@@ -125,7 +125,7 @@ const Login = ({ onLoginSuccess }) => {
               <span style={styles.heroPill}>🌟 Trusted by 500+ Families in Bailhongal</span>
               <h1 style={styles.heroTitle}>Smart Vaccination<br/><span style={styles.heroAccent}>Care for Your Child</span></h1>
               <p style={styles.heroDesc}>
-                Maruti Multispeciality Hospital brings you a digital vaccination management portal —
+                Hanuman Multispeciality Hospital brings you a digital vaccination management portal —
                 track your child's immunization milestones, book appointments with expert doctors,
                 receive real-time reminders, and access official health certificates, all from one place.
               </p>
@@ -158,7 +158,7 @@ const Login = ({ onLoginSuccess }) => {
           <div style={styles.aboutGlass}>
             <h2 style={styles.aboutTitle}>About Our Portal</h2>
             <p style={styles.aboutDesc}>
-              The <strong>Maruti Vaccination Portal</strong> is a dedicated digital health platform built for parents
+              The <strong>Hanuman Vaccination Portal</strong> is a dedicated digital health platform built for parents
               in Bailhongal and surrounding communities. Our system follows the <strong>National Immunization Schedule</strong>
               to ensure every child receives timely vaccinations from birth to 16 years. Parents can register their children,
               view personalized vaccine roadmaps, schedule appointments, and download official vaccination certificates —
